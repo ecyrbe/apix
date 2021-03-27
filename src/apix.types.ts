@@ -1,11 +1,14 @@
+import { OpenAPIV3 } from 'openapi-types';
 export enum ApixMode {
   operations = 'operations',
   resources = 'resources',
 }
 
+export type ApixKind = 'Configuration' | 'Resource' | 'Api' | 'Endpoint';
+
 export interface ApixObject {
   apiVersion: string;
-  kind: string;
+  kind: ApixKind;
   metadata: {
     name: string;
     labels?: Record<string, string>;
@@ -38,5 +41,34 @@ export interface ApixResources extends ApixObject {
     alias?: string;
     apified: boolean;
     operations: Array<'get' | 'create' | 'delete' | 'patch' | 'describe' | 'exec'>;
+  };
+}
+
+export interface ApixApi extends ApixObject {
+  apiVersion: 'apix/v1';
+  kind: 'Api';
+  spec: {
+    url: string;
+    version: string;
+    description: string;
+  };
+}
+
+export interface ApixEndpoint extends ApixObject {
+  apiVersion: 'apix/v1';
+  kind: 'Endpoint';
+  spec: {
+    parameters?: Array<{
+      name: string;
+      required: boolean;
+      description?: string;
+      schema?: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject;
+    }>;
+    template: {
+      method: string;
+      url: string;
+      headers: Record<string, string>;
+      body: Record<string, string>;
+    };
   };
 }

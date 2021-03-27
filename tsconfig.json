@@ -1,17 +1,17 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "declaration": true,
     "removeComments": false,
-    "target": "es2017",
+    "target": "ES2020",
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "lib": ["ES2019.Array","ES2020"]
   },
   "exclude": ["node_modules", "dist"],
-  "files": ["src/index.ts"]
 }
