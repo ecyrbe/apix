@@ -1,5 +1,5 @@
 {
-  "name": "@apix/cli",
+  "name": "apix-cli",
   "version": "0.0.1",
   "description": "command line interface tool for calling apis, persist and sharing them",
   "main": "dist/apix.js",
