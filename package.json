@@ -6,6 +6,9 @@
   "bin": {
     "apix": "dist/apix.js"
   },
+  "files": [
+    "dist"
+  ],
   "repository": "https://github.com/ecyrbe/apix.git",
   "author": "ecyrbe <ecyrbe@gmail.com>",
   "license": "MIT",
