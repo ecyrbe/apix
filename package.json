@@ -12,6 +12,11 @@
   "repository": "https://github.com/ecyrbe/apix.git",
   "author": "ecyrbe <ecyrbe@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "prepublish": "yarn build",
+    "publish": "yarn publish"
+  },
   "devDependencies": {
     "@types/lodash": "^4.14.168",
     "@types/node": "^14.14.35",
