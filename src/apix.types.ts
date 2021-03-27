@@ -6,6 +6,9 @@ export enum ApixMode {
 
 export type ApixKind = 'Configuration' | 'Resource' | 'Api' | 'Endpoint';
 
+export const METHODS = ['get', 'put', 'post', 'patch', 'delete', 'options', 'head'] as const;
+export type Method = typeof METHODS[number];
+
 export interface ApixObject {
   apiVersion: string;
   kind: ApixKind;

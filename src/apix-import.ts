@@ -6,9 +6,7 @@ import { get } from 'lodash';
 import { ApixApi, ApixEndpoint, ApixObject } from './apix.types';
 import { getConfig, hasConfig, storeResources } from './apix.utils';
 import { join } from 'path';
-
-const METHODS = ['get', 'put', 'post', 'patch', 'delete', 'options', 'head', 'trace'] as const;
-type Method = typeof METHODS[number];
+import { Method, METHODS } from './apix.types';
 
 const isMethod = (method: string): method is Method => METHODS.includes(method as Method);
 const isRef = <T>(object: T | OpenAPIV3.ReferenceObject): object is OpenAPIV3.ReferenceObject => '$ref' in object;
