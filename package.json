@@ -14,7 +14,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "publish": "yarn build"
+    "prepack": "yarn build"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.168",
