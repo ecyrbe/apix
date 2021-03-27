@@ -7,7 +7,6 @@ import YAML from 'yaml';
 import { merge } from 'lodash';
 
 import { ApixConfig, ApixMode, ApixResources } from './apix.types';
-import { resourceUsage } from 'node:process';
 
 export const command = 'init [name]';
 export const describe = 'create an apix project ';
@@ -101,7 +100,7 @@ export const handler = async (argv: Yargs.Arguments) => {
       },
     },
   ];
-  resources.forEach((resource) => {
+  resources.forEach(resource => {
     const resourceFile = join(projectPath, `apix.${resource.metadata.name}.resource.yml`);
     if (sh.test('-f', resourceFile)) {
       const original = YAML.parse(readFileSync(resourceFile).toString());
