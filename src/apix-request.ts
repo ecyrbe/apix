@@ -6,7 +6,7 @@ import { apixLog } from './apix.utils';
 export const command = 'request <method> <url>';
 export const describe = 'make an http request using curl requests';
 export const builder = (yargs: Yargs.Argv) => {
-  yargs.positional('method', { describe: 'method', choices: METHODS });
+  yargs.positional('method', { describe: 'http verb to make the request', choices: METHODS });
   yargs.positional('url', { describe: 'url to request' });
   yargs.check((argv: Yargs.Arguments) => {
     if (!/^https?:\/\//.test(argv.url as string)) {

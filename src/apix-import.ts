@@ -107,6 +107,7 @@ function loadOpenApi(doc: OpenAPIV3.Document, name?: string): ApixObject[] {
               `${url.replace(/^\//, '').replace(/\{\{/g, 'by-').replace(/[/]/g, '.').replace(/[{}]/g, '')}.${method}`,
             labels: {
               app: 'apix',
+              api: api.metadata.name,
             },
           },
           spec: {
@@ -138,7 +139,7 @@ export const builder = (yargs: Yargs.Argv) => {
 
 export const handler = async (argv: Yargs.Arguments) => {
   if (!hasConfig()) {
-    console.log('No project created yet, execute "apix init" first');
+    console.error('No project created yet, execute "apix init" first');
     return;
   }
   const document = YAML.parse((await readFile(argv.file as string)).toString());

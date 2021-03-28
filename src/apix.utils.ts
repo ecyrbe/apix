@@ -27,7 +27,8 @@ export async function loadResources(kind: ApixKind): Promise<ApixObject[]> {
   const config = await getConfig();
   const project = config.spec.projects.find(project => project.name === config.spec.project);
   if (project) {
-    const files = sh.find(project.path).filter(file => new RegExp(`\\.${kind}\\.ya?ml`).test(file));
+    const resource = kind.toLowerCase();
+    const files = sh.find(project.path).filter(file => new RegExp(`\\.${resource}\\.ya?ml`).test(file));
     const resources = await Promise.allSettled(
       files.map(async file => {
         const document = (await readFile(file)).toString();

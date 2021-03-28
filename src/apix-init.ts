@@ -6,7 +6,7 @@ import Yargs from 'yargs';
 import YAML from 'yaml';
 import { merge } from 'lodash';
 
-import { ApixConfig, ApixMode, ApixResources } from './apix.types';
+import { ApixConfig, ApixMode, ApixResource } from './apix.types';
 
 export const command = 'init [name]';
 export const describe = 'create an apix project ';
@@ -50,7 +50,7 @@ export const handler = async (argv: Yargs.Arguments) => {
   }
   writeFileSync(configFile, YAML.stringify(config), { flag: 'w' });
 
-  let resources: ApixResources[] = [
+  let resources: ApixResource[] = [
     {
       apiVersion: 'apix/v1',
       kind: 'Resource',

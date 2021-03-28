@@ -35,7 +35,7 @@ export interface ApixConfig extends ApixObject {
   };
 }
 
-export interface ApixResources extends ApixObject {
+export interface ApixResource extends ApixObject {
   apiVersion: 'apix/v1';
   kind: 'Resource';
   spec: {
@@ -60,6 +60,13 @@ export interface ApixApi extends ApixObject {
 export interface ApixRequest extends ApixObject {
   apiVersion: 'apix/v1';
   kind: 'Request';
+  metadata: {
+    name: string;
+    labels: {
+      app: string;
+      api: string;
+    };
+  };
   spec: {
     parameters?: Array<{
       name: string;
