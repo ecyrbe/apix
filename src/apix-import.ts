@@ -3,7 +3,7 @@ import Yargs, { showCompletionScript } from 'yargs';
 import YAML from 'yaml';
 import { OpenAPIV3 } from 'openapi-types';
 import { get } from 'lodash';
-import { ApixApi, ApixEndpoint, ApixObject } from './apix.types';
+import { ApixApi, ApixRequest, ApixObject } from './apix.types';
 import { getConfig, hasConfig, storeResources } from './apix.utils';
 import { join } from 'path';
 import { Method, METHODS } from './apix.types';
@@ -15,14 +15,27 @@ const clean = <T>(object: T) => {
   return object;
 };
 
-const getParameterObject = (
-  parameter: OpenAPIV3.ParameterObject | OpenAPIV3.ReferenceObject,
-  doc: OpenAPIV3.Document
-): OpenAPIV3.ParameterObject => {
-  if (isRef(parameter)) {
-    return get(doc, parameter.$ref.replace('#/', '').replace(/\//g, '.'));
+const getObject = <T>(obj: T | OpenAPIV3.ReferenceObject, doc: OpenAPIV3.Document): T | undefined => {
+  if (!obj) {
+    return undefined;
   }
-  return parameter;
+  if (isRef(obj)) {
+    return get(doc, obj.$ref.replace('#/', '').replace(/\//g, '.'));
+  }
+  return obj;
+};
+
+const getSchema = (
+  obj: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject,
+  doc: OpenAPIV3.Document
+): OpenAPIV3.SchemaObject => {
+  const schema = getObject(obj, doc);
+  if (schema && schema.properties) {
+    Object.keys(schema.properties).forEach(property => {
+      if (schema.properties[property]) schema.properties[property] = getSchema(schema.properties[property], doc);
+    });
+  }
+  return schema;
 };
 
 function loadOpenApi(doc: OpenAPIV3.Document, name?: string): ApixObject[] {
@@ -47,35 +60,63 @@ function loadOpenApi(doc: OpenAPIV3.Document, name?: string): ApixObject[] {
       .map(method => {
         const mainParams = doc.paths[path].parameters ?? [];
         const operation = doc.paths[path][method];
-        const parameters = [...mainParams, ...(operation.parameters ?? [])];
+        let parameters: {
+          name: string;
+          required: boolean;
+          description?: string;
+          schema?: OpenAPIV3.SchemaObject;
+        }[] = [];
+        let headersTemplate: Record<string, string>;
+        let bodyTemplate: string | Record<string, unknown>;
+        [...mainParams, ...(operation.parameters ?? [])].forEach(parameter => {
+          const param = getObject(parameter, doc);
+          if (param.in === 'header') {
+            if (!headersTemplate) headersTemplate = {};
+            headersTemplate[param.name] = `{{${param.name}}}`;
+          }
+          parameters.push(
+            clean({
+              name: param.name,
+              description: param.description,
+              required: param.required ?? false,
+              schema: getSchema(param.schema ?? param.content?.['application/json'].schema, doc),
+            })
+          );
+        });
+        if (operation.requestBody) {
+          const bodyParam = getObject(operation.requestBody, doc);
+          const schema = bodyParam.content?.['application/json']?.schema;
+          if (schema) {
+            bodyTemplate = `{{body}}`;
+            parameters.push({
+              name: 'body',
+              description: bodyParam.description,
+              required: true,
+              schema: getSchema(schema, doc),
+            });
+          }
+        }
         const url = path.replace(/\{/g, '{{').replace(/\}/g, '}}');
 
-        const endpoint: ApixEndpoint = {
+        const endpoint: ApixRequest = {
           apiVersion: 'apix/v1',
-          kind: 'Endpoint',
+          kind: 'Request',
           metadata: {
-            name: operation.operationId.replace(/[/]/g, '.') ?? url.replace(/[{}/]/g, ''),
+            name:
+              operation.operationId.replace(/[/]/g, '.') ??
+              `${url.replace(/^\//, '').replace(/\{\{/g, 'by-').replace(/[/]/g, '.').replace(/[{}]/g, '')}.${method}`,
             labels: {
               app: 'apix',
             },
           },
           spec: {
-            parameters: parameters
-              .map(parameter => getParameterObject(parameter, doc))
-              .map(parameter =>
-                clean({
-                  name: parameter.name,
-                  description: parameter.description,
-                  required: parameter.required ?? false,
-                  schema: parameter.schema,
-                })
-              ),
-            template: {
+            parameters,
+            template: clean({
               method,
               url,
-              headers: {},
-              body: {},
-            },
+              headers: headersTemplate,
+              boby: bodyTemplate,
+            }),
           },
         };
         return endpoint;

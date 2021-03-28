@@ -4,7 +4,7 @@ export enum ApixMode {
   resources = 'resources',
 }
 
-export type ApixKind = 'Configuration' | 'Resource' | 'Api' | 'Endpoint';
+export type ApixKind = 'Configuration' | 'Resource' | 'Api' | 'Request';
 
 export const METHODS = ['get', 'put', 'post', 'patch', 'delete', 'options', 'head'] as const;
 export type Method = typeof METHODS[number];
@@ -57,21 +57,21 @@ export interface ApixApi extends ApixObject {
   };
 }
 
-export interface ApixEndpoint extends ApixObject {
+export interface ApixRequest extends ApixObject {
   apiVersion: 'apix/v1';
-  kind: 'Endpoint';
+  kind: 'Request';
   spec: {
     parameters?: Array<{
       name: string;
       required: boolean;
       description?: string;
-      schema?: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject;
+      schema?: OpenAPIV3.SchemaObject;
     }>;
     template: {
       method: string;
       url: string;
-      headers: Record<string, string>;
-      body: Record<string, string>;
+      headers?: Record<string, string>;
+      body?: string | Record<string, unknown> | Record<string, string>[];
     };
   };
 }

@@ -87,14 +87,14 @@ export const handler = async (argv: Yargs.Arguments) => {
       apiVersion: 'apix/v1',
       kind: 'Resource',
       metadata: {
-        name: 'endpoint',
+        name: 'request',
         labels: {
           name: 'apix',
         },
       },
       spec: {
         description: 'declared endpoints of an api',
-        kind: 'Endpoint',
+        kind: 'Request',
         apified: true,
         operations: ['get', 'create', 'delete', 'patch', 'describe', 'exec'],
       },

@@ -1,7 +1,13 @@
 # APIX
 
-Command line interface tool for calling apis, persist and sharing them.
+> Command line interface tool for calling apis, persist and sharing them.
 
+[![npm](https://img.shields.io/npm/v/apix-cli.svg)](https://www.npmjs.com/package/apix-cli)
+[![downloads](https://img.shields.io/npm/dm/apix-cli.svg)](https://www.npmjs.com/package/apix-cli)
+[![node](http://img.shields.io/node/v/apix-cli.svg)](https://nodejs.org/)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
+[![license](https://img.shields.io/npm/l/apix-cli.svg)](https://github.com/ecyrbe/apix/blob/main/LICENSE)
 # What is it ?
 
 It's a command line tool replacement for :
@@ -24,7 +30,7 @@ ls -al
 drwxrwxr-x 4 user user  4096 mars  27 20:06 .
 drwxrwxr-x 8 user user  4096 mars  27 20:43 ..
 -rw-rw-r-- 1 user user   223 mars  27 20:04 apix.api.resource.yml
--rw-rw-r-- 1 user user   258 mars  27 20:04 apix.endpoint.resource.yml
+-rw-rw-r-- 1 user user   258 mars  27 20:04 apix.request.resource.yml
 -rw-rw-r-- 1 user user   186 mars  27 20:04 apix.resource.resource.yml
 # import swagger openapi definition file that will be saved in kubernetes like format that is easier to edit than openapi
 apix import github https://raw.githubusercontent.com/github/rest-api-description/main/descriptions/api.github.com/api.github.com.yaml
@@ -33,7 +39,7 @@ ls -al
 drwxrwxr-x 4 user user  4096 mars  27 20:06 .
 drwxrwxr-x 8 user user  4096 mars  27 20:43 ..
 -rw-rw-r-- 1 user user   223 mars  27 20:04 apix.api.resource.yml
--rw-rw-r-- 1 user user   258 mars  27 20:04 apix.endpoint.resource.yml
+-rw-rw-r-- 1 user user   258 mars  27 20:04 apix.request.resource.yml
 -rw-rw-r-- 1 user user   186 mars  27 20:04 apix.resource.resource.yml
 drwxrwxr-x 2 user user 65536 mars  27 20:06 github
 # 745 new api endpoints added, one kubernetes like file for each
