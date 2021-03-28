@@ -13,6 +13,7 @@ argv
   .command(get.command, get.describe, get.builder, get.handler)
   .command(imp.command, imp.describe, imp.builder, imp.handler)
   .command(req.command, req.describe, req.builder, req.handler)
+  .option('output-format', { describe: 'output format', alias: 'o', choices: ['json', 'yaml'], default: 'json' })
   .demandCommand(1, '')
   .recommendCommands()
   .strict()

@@ -1,6 +1,7 @@
 import Yargs from 'yargs';
-import { Method, METHODS } from './apix.types';
 import axios from 'axios';
+import { Method, METHODS } from './apix.types';
+import { apixLog } from './apix.utils';
 
 export const command = 'request <method> <url>';
 export const describe = 'make an http request using curl requests';
@@ -15,9 +16,11 @@ export const builder = (yargs: Yargs.Argv) => {
   });
 };
 export const handler = async (argv: Yargs.Arguments) => {
-  const result = await axios.request({
-    method: argv.method as Method,
-    url: argv.url as string,
-  });
-  console.log(result.data);
+  const result = (
+    await axios.request({
+      method: argv.method as Method,
+      url: argv.url as string,
+    })
+  ).data;
+  apixLog(result, argv.o as string);
 };

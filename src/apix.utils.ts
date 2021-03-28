@@ -1,11 +1,11 @@
 import { readFile, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { homedir } from 'os';
+import { highlight } from 'cli-highlight';
 import sh from 'shelljs';
 import YAML from 'yaml';
 
-import { ApixConfig, ApixKind, ApixObject, ApixResources } from './apix.types';
-import { resolve } from 'node:path';
+import { ApixConfig, ApixKind, ApixObject } from './apix.types';
 
 let configPath = join(homedir(), '.apix');
 let configFile = join(configPath, 'apix.config.yml');
@@ -56,4 +56,24 @@ export async function storeResources(directory: string, resources: ApixObject[])
       }
     );
   });
+}
+
+export function apixLog<T>(obj: T, language: string) {
+  let output: string;
+  if (language === 'json') {
+    output = JSON.stringify(obj, undefined, 2);
+    prettyPrint(output, language);
+  }
+  if (language === 'yaml') {
+    output = YAML.stringify(obj);
+    prettyPrint(output, language);
+  }
+}
+
+function prettyPrint(output: string, language: string) {
+  if (process.stdout.isTTY && output.length < 65535) {
+    console.log(highlight(output, { language, ignoreIllegals: true }));
+  } else {
+    console.log(output);
+  }
 }
