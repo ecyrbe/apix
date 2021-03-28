@@ -5,6 +5,7 @@ import * as init from './apix-init';
 import * as get from './apix-get';
 import * as imp from './apix-import';
 import * as req from './apix-request';
+import * as exec from './apix-exec';
 
 const argv = yargs(hideBin(process.argv));
 
@@ -13,6 +14,7 @@ argv
   .command(get.command, get.describe, get.builder, get.handler)
   .command(imp.command, imp.describe, imp.builder, imp.handler)
   .command(req.command, req.describe, req.builder, req.handler)
+  .command(exec.command, exec.describe, exec.builder, exec.handler)
   .option('output-format', { describe: 'output format', alias: 'o', choices: ['json', 'yaml'], default: 'json' })
   .demandCommand(1, '')
   .recommendCommands()
