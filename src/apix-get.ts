@@ -26,5 +26,5 @@ export const handler = async (argv: Yargs.Arguments) => {
     console.error(`No resource named '${argv.resource}' found. use 'apix get resource' to list resource types`);
     return;
   }
-  apixLog(result, argv.o as string);
+  apixLog(result, { language: argv.o as string, type: 'log' });
 };

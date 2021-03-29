@@ -15,7 +15,12 @@ argv
   .command(imp.command, imp.describe, imp.builder, imp.handler)
   .command(req.command, req.describe, req.builder, req.handler)
   .command(exec.command, exec.describe, exec.builder, exec.handler)
-  .option('output-format', { describe: 'output format', alias: 'o', choices: ['json', 'yaml'], default: 'json' })
+  .option('output-format', {
+    describe: 'output format',
+    alias: 'o',
+    choices: ['json', 'yaml', 'html'],
+    default: 'json',
+  })
   .demandCommand(1, '')
   .recommendCommands()
   .strict()

@@ -1,7 +1,7 @@
 import Yargs from 'yargs';
 import axios from 'axios';
 import { Method, METHODS } from './apix.types';
-import { apixLog } from './apix.utils';
+import { apixLog, isAxiosError } from './apix.utils';
 
 export const command = 'request <method> <url>';
 export const describe = 'make an http request using curl requests';
@@ -16,11 +16,19 @@ export const builder = (yargs: Yargs.Argv) => {
   });
 };
 export const handler = async (argv: Yargs.Arguments) => {
-  const result = (
-    await axios.request({
-      method: argv.method as Method,
-      url: argv.url as string,
-    })
-  ).data;
-  apixLog(result, argv.o as string);
+  try {
+    const result = (
+      await axios.request({
+        method: argv.method as Method,
+        url: argv.url as string,
+      })
+    ).data;
+    apixLog(result, { language: argv.o as string, type: 'log' });
+  } catch (error) {
+    if (isAxiosError(error)) {
+      console.error(error.message);
+      console.error(`status: ${error.response?.status ?? 'UNKNOWN'}`);
+      apixLog(error.response.data, { language: argv.o as string, type: 'error' });
+    }
+  }
 };

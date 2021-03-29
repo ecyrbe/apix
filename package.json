@@ -23,6 +23,7 @@
   "devDependencies": {
     "@types/lodash": "^4.14.168",
     "@types/node": "^14.14.35",
+    "@types/prompts": "^2.0.9",
     "@types/shelljs": "^0.8.8",
     "@types/yargs": "^16.0.0",
     "@typescript-eslint/eslint-plugin": "^4.17.0",
@@ -38,10 +39,13 @@
     "typescript": "^4.2.3"
   },
   "dependencies": {
+    "ajv": "^8.0.1",
     "axios": "^0.21.1",
     "cli-highlight": "^2.1.11",
     "lodash": "^4.17.21",
+    "prompts": "^2.4.0",
     "shelljs": "^0.8.4",
+    "stjs": "^0.0.5",
     "yaml": "^1.10.2",
     "yargs": "^16.2.0"
   }

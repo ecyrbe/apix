@@ -1,6 +1,7 @@
 import { readFile, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { homedir } from 'os';
+import { AxiosError } from 'axios';
 import { highlight } from 'cli-highlight';
 import sh from 'shelljs';
 import YAML from 'yaml';
@@ -59,22 +60,29 @@ export async function storeResources(directory: string, resources: ApixObject[])
   });
 }
 
-export function apixLog<T>(obj: T, language: string) {
+type ApixLogOptions = { language: string; type: string };
+
+export function apixLog<T>(obj: T, options: ApixLogOptions) {
   let output: string;
-  if (language === 'json') {
+  if (options.language === 'json') {
     output = JSON.stringify(obj, undefined, 2);
-    prettyPrint(output, language);
+    prettyPrint(output, options);
+    return;
   }
-  if (language === 'yaml') {
+  if (options.language === 'yaml') {
     output = YAML.stringify(obj);
-    prettyPrint(output, language);
+    prettyPrint(output, options);
+    return;
+  }
+  prettyPrint((obj as unknown) as string, options);
+}
+
+function prettyPrint(output: string, options: ApixLogOptions) {
+  if (process.stdout.isTTY && output.length < 65535) {
+    console[options.type](highlight(output, { language: options.language, ignoreIllegals: true }));
+  } else {
+    console[options.type](output);
   }
 }
 
-function prettyPrint(output: string, language: string) {
-  if (process.stdout.isTTY && output.length < 65535) {
-    console.log(highlight(output, { language, ignoreIllegals: true }));
-  } else {
-    console.log(output);
-  }
-}
+export const isAxiosError = (error: unknown): error is AxiosError => (error as AxiosError).isAxiosError;
