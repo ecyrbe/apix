@@ -1,6 +1,6 @@
-import Yargs, { string } from 'yargs';
+import Yargs, { argv, string } from 'yargs';
 import axios from 'axios';
-import prompts, { PromptType } from 'prompts';
+import inquirer from 'inquirer';
 import Ajv from 'ajv';
 import YAML from 'yaml';
 import ST from 'stjs';
@@ -17,7 +17,14 @@ export const command = 'exec <request> [parameters..]';
 export const describe = 'execute a request by name';
 export const builder = (yargs: Yargs.Argv) => {
   yargs.positional('request', { describe: 'request to execute' });
-  yargs.positional('parameters', { describe: 'optional request parameters' });
+  yargs.positional('parameters', { describe: 'optional request parameters with key:value format', array: true });
+  yargs.check((argv: Yargs.Arguments) => {
+    const parameters = argv.parameters as string[];
+    if (!parameters.every(parameter => parameter.indexOf(':') !== -1)) {
+      throw new Error('Exec parameters should be og the form <key:value> ');
+    }
+    return true;
+  });
 };
 export const handler = async (argv: Yargs.Arguments) => {
   const db = new ApixDb();
@@ -27,24 +34,33 @@ export const handler = async (argv: Yargs.Arguments) => {
     return;
   }
   const api = await db.findOne<ApixApi>({ kind: 'Api', 'metadata.name': request.metadata.labels.api });
+  const parameters = argv.parameters as string[];
+  let env: Record<string, unknown> = Object.fromEntries(parameters.map(parameter => parameter.split(':')));
   const questions = request.spec.parameters
-    ?.filter(parameter => parameter.required)
+    ?.filter(parameter => parameter.required && env[parameter.name] === undefined)
     .map(parameter => ({
-      type: 'text' as PromptType,
+      type: ['object', 'array'].includes(parameter.schema.type) ? 'editor' : 'input',
       name: parameter.name,
       message: parameter.name,
-      instructions: parameter.description,
+      postfix: '.json',
       validate: (value: string): true | string => {
         try {
           const object = YAML.parse(value);
-          if (!ajv.validate(parameter.schema, object)) return YAML.stringify(ajv.errors);
-        } catch {
-          return 'could not parse value';
+          if (!ajv.validate(parameter.schema, object)) {
+            return `${YAML.stringify(ajv.errors)}`;
+          }
+        } catch (e) {
+          return `invalid format`;
         }
         return true;
       },
     }));
-  const env = await prompts(questions);
+
+  try {
+    env = { ...env, ...(await inquirer.prompt(questions)) };
+  } catch (error) {
+    console.log(error);
+  }
   const req = render(request.spec.template, env);
 
   try {

@@ -1,9 +1,10 @@
 import { readFile } from 'fs/promises';
-import Yargs, { showCompletionScript } from 'yargs';
+import Yargs from 'yargs';
 import YAML from 'yaml';
 import { OpenAPIV3 } from 'openapi-types';
-import { get } from 'lodash';
+import { get, omit } from 'lodash';
 import { ApixApi, ApixRequest, ApixObject } from './apix.types';
+import { SchemaObject } from './jsonschema.types';
 import { getConfig, hasConfig, storeResources } from './apix.utils';
 import { join } from 'path';
 import { Method, METHODS } from './apix.types';
@@ -25,17 +26,24 @@ const getObject = <T>(obj: T | OpenAPIV3.ReferenceObject, doc: OpenAPIV3.Documen
   return obj;
 };
 
-const getSchema = (
-  obj: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject,
-  doc: OpenAPIV3.Document
-): OpenAPIV3.SchemaObject => {
+const getSchema = (obj: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject, doc: OpenAPIV3.Document) => {
   const schema = getObject(obj, doc);
   if (schema && schema.properties) {
     Object.keys(schema.properties).forEach(property => {
       if (schema.properties[property]) schema.properties[property] = getSchema(schema.properties[property], doc);
     });
   }
-  return schema;
+  return omit(
+    schema,
+    'deprecated',
+    'discriminator',
+    'example',
+    'externalDocs',
+    'nullable',
+    'readOnly',
+    'writeOnly',
+    'xml'
+  ) as SchemaObject;
 };
 
 function loadOpenApi(doc: OpenAPIV3.Document, name?: string): ApixObject[] {
@@ -64,7 +72,7 @@ function loadOpenApi(doc: OpenAPIV3.Document, name?: string): ApixObject[] {
           name: string;
           required: boolean;
           description?: string;
-          schema?: OpenAPIV3.SchemaObject;
+          schema?: SchemaObject;
         }[] = [];
         let headersTemplate: Record<string, string>;
         let bodyTemplate: string | Record<string, unknown>;

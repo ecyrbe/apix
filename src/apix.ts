@@ -6,10 +6,12 @@ import * as get from './apix-get';
 import * as imp from './apix-import';
 import * as req from './apix-request';
 import * as exec from './apix-exec';
+import { complete } from './apix-completion';
 
 const argv = yargs(hideBin(process.argv));
 
 argv
+  .completion('completion', complete)
   .command(init.command, init.describe, init.builder, init.handler)
   .command(get.command, get.describe, get.builder, get.handler)
   .command(imp.command, imp.describe, imp.builder, imp.handler)

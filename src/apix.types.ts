@@ -1,4 +1,4 @@
-import { OpenAPIV3 } from 'openapi-types';
+import { SchemaObject } from './jsonschema.types';
 export enum ApixMode {
   operations = 'operations',
   resources = 'resources',
@@ -72,7 +72,7 @@ export interface ApixRequest extends ApixObject {
       name: string;
       required: boolean;
       description?: string;
-      schema?: OpenAPIV3.SchemaObject;
+      schema?: SchemaObject;
     }>;
     template: {
       method: string;
