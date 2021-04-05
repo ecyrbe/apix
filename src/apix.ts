@@ -6,7 +6,6 @@ import * as get from './apix-get';
 import * as imp from './apix-import';
 import * as req from './apix-request';
 import * as exec from './apix-exec';
-import { complete } from './apix-completion';
 
 const argv = yargs(hideBin(process.argv));
 
