@@ -11,6 +11,7 @@ import { ApixConfig, ApixMode, ApixResource } from './apix.types';
 export const command = 'init [name]';
 export const describe = 'create an apix project ';
 export const builder = (yargs: Yargs.Argv) => {
+  yargs.completion();
   yargs.options('path', { describe: 'optional path to apix repository', default: '.' });
   yargs.positional('name', { describe: 'name of the repository', default: 'default' });
 };

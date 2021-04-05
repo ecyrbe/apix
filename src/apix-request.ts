@@ -6,6 +6,7 @@ import { apixLog, isAxiosError } from './apix.utils';
 export const command = 'request <method> <url>';
 export const describe = 'make an http request using curl requests';
 export const builder = (yargs: Yargs.Argv) => {
+  yargs.completion();
   yargs.positional('method', { describe: 'http verb to make the request', choices: METHODS });
   yargs.positional('url', { describe: 'url to request' });
   yargs.check((argv: Yargs.Arguments) => {

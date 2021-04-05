@@ -139,6 +139,7 @@ export const command = 'import <name>';
 export const describe = "import an openapi api and all it's endpoints";
 
 export const builder = (yargs: Yargs.Argv) => {
+  yargs.completion();
   yargs.positional('name', { describe: 'name you want to give to the api to import' });
   yargs
     .options('file', { alias: 'f', describe: 'path to openapi document in json or yaml format' })

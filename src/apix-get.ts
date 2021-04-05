@@ -22,7 +22,12 @@ export const getResource = async (resource: string) => {
 export const command = 'get <resource>';
 export const describe = 'get all resources of a given type';
 export const builder = (yargs: Yargs.Argv) => {
-  return yargs.positional('resource', { describe: 'name an apix resource type' });
+  return yargs
+    .positional('resource', { describe: 'name an apix resource type' })
+    .completion('completion', async (current, argv) => {
+      const resources = await getResource('resource');
+      return resources?.map(resource => resource.metadata.name) ?? [];
+    });
 };
 export const handler = async (argv: Yargs.Arguments) => {
   const result = await getResource(argv.resource as string);

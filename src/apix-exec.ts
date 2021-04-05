@@ -1,4 +1,4 @@
-import Yargs, { argv, string } from 'yargs';
+import Yargs from 'yargs';
 import axios from 'axios';
 import inquirer from 'inquirer';
 import Ajv from 'ajv';
@@ -8,6 +8,7 @@ import ST from 'stjs';
 import { ApixApi, ApixRequest, Method } from './apix.types';
 import { apixLog, isAxiosError } from './apix.utils';
 import { ApixDb } from './apix.db';
+import { getResource } from './apix-get';
 
 const ajv = new Ajv({ allErrors: true });
 
@@ -16,6 +17,10 @@ const render = <T>(template: T, env: Record<string, unknown>): T => ST.select(en
 export const command = 'exec <request> [parameters..]';
 export const describe = 'execute a request by name';
 export const builder = (yargs: Yargs.Argv) => {
+  yargs.completion('completion', async (current, argv) => {
+    const resources = await getResource('request');
+    return resources?.map(resource => resource.metadata.name) ?? [];
+  });
   yargs.positional('request', { describe: 'request to execute' });
   yargs.positional('parameters', { describe: 'optional request parameters with key:value format', array: true });
   yargs.check((argv: Yargs.Arguments) => {

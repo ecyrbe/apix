@@ -11,7 +11,7 @@ import { complete } from './apix-completion';
 const argv = yargs(hideBin(process.argv));
 
 argv
-  .completion('completion', complete)
+  .completion()
   .command(init.command, init.describe, init.builder, init.handler)
   .command(get.command, get.describe, get.builder, get.handler)
   .command(imp.command, imp.describe, imp.builder, imp.handler)
@@ -25,5 +25,4 @@ argv
   })
   .demandCommand(1, '')
   .recommendCommands()
-  .strict()
   .help().argv;
